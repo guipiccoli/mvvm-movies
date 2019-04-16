@@ -10,6 +10,11 @@ import UIKit
 
 class MovieCell: UITableViewCell {
 
+    @IBOutlet var movieImage: UIImageView!
+    @IBOutlet var movieName: UILabel!
+    @IBOutlet var movieReleaseDate: UILabel!
+    @IBOutlet var movieVoteAverage: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
