@@ -8,29 +8,30 @@
 
 import Foundation
 
-public class APIService {
+struct APIService {
     
-     var popularList : [ResultPopular] = []
-     var topRatedList : [MovieTopRated] = []
+     var popularList : MoviePopular
+     var topRatedList : MovieTopRated
 
     
-    public func getPopularMovies() -> [ResultPopular] {
-        popularList.removeAll()
+    static func getPopularMovies(completionHandler completion: @escaping (MoviePopular?) -> Void) {
         var request = URLRequest(url: URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=edac55baa5247ecf4089bac4553ff6ed&language=en-US&page=1")!)
         request.httpMethod = "GET"
         
         let session = URLSession.shared
         let dataTask = session.dataTask(with: request, completionHandler: { data, response, error -> Void in
-            do {
-               // let json = try JSONSerialization.jsonObject(with: data!) as! Dictionary<String, AnyObject>
-                let movie = try JSONDecoder().decode(MoviePopular.self, from: data!)
-                self.popularList = movie.results
-            } catch {
-                print("error")
-            }
+            guard let error = error
+                else {
+                    let movie = try? JSONDecoder().decode(MoviePopular.self, from: data!)
+                    completion(movie)
+                    print(movie)
+                    return
+                }
+            print(error.localizedDescription)
+            completion(nil)
+            return
         })
         dataTask.resume()
-        return popularList
     }
     
 //    func getTopRatedMovies() -> [MovieTopRated] {

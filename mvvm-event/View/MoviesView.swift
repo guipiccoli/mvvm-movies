@@ -7,16 +7,22 @@
 //
 
 import UIKit
+import Foundation
 
 class MoviesView: UIViewController {
 
-
+    var moviePopular: MoviePopular?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        let apiService = APIService.init()
-//        var listPopular = apiService.getPopularMovies()
+                
+        APIService.getPopularMovies { (MoviePopular) in
+            self.moviePopular = MoviePopular ?? nil
+            DispatchQueue.main.async {
+                print(self.moviePopular)
+            }
+            
+        }
         
     }
 }
