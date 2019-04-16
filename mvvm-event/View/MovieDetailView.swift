@@ -9,24 +9,34 @@ import UIKit
 
 class MovieDetailView: UIViewController {
     
-    var resultPopular: ResultPopular? = nil
-    var resultTopRated: ResultTopRated? = nil
-    
     @IBOutlet weak var movieImage: UIImageView!
     @IBOutlet weak var movieTitle: UILabel!
     @IBOutlet weak var movieReleaseDate: UILabel!
     @IBOutlet weak var movieAverageRate: UILabel!
     @IBOutlet weak var movieOverview: UILabel!
     
+    var movie: MovieDetailViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let moviePopular = resultPopular else {return}
-        movieTitle.text = moviePopular.originalTitle
-        movieReleaseDate.text = moviePopular.releaseDate
-        movieAverageRate.text = "\(moviePopular.voteAverage)"
+        movieTitle.text = self.movie?.getMovieTitle()
+        movieReleaseDate.text = self.movie?.getMovieReleaseDate()
+        movieAverageRate.text = self.movie?.getMovieRate()
         movieOverview.numberOfLines = 0
-        movieOverview.text = moviePopular.overview
+        movieOverview.text = self.movie?.getMovieOverview()
+        
+        
+        let imageUrl = URL(string: "https://image.tmdb.org/t/p/w500" + (movie?.getMovieBackdrop())!)!
+        
+        
+        DispatchQueue.global(qos: .background).async {
+            let data = try! Data(contentsOf: imageUrl)
+            DispatchQueue.main.async {
+                
+                let image = UIImage(data: data)
+                self.movieImage.image = image
+            }
+        }
     }
 }

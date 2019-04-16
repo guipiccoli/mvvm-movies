@@ -10,8 +10,9 @@ import UIKit
 
 class MoviesViewModel {
     
-    var moviesPopular: MoviePopular?
-    var moviesTopRated: MovieTopRated?
+    private var moviesPopular: MoviePopular?
+    var downloadDelegate: DownloadDelegate?
+//    var moviesTopRated: MovieTopRated?
     
     init() {
         fetchMoviesPopular()
@@ -20,14 +21,12 @@ class MoviesViewModel {
     func fetchMoviesPopular(){
         APIService.getPopularMovies { (MoviePopular) in
             self.moviesPopular = MoviePopular ?? nil
+            self.downloadDelegate?.didFinishDownloading()
+            
         }
+        
     }
-    func fetchTopRated(){
-        APIService.getTopRatedMovies { (MovieTopRated) in
-            self.moviesTopRated = MovieTopRated ?? nil
-        }
-    }
-    
+        
     func getMoviesNumber() -> Int {
         if let size = moviesPopular?.results.count{
             print(size)
@@ -36,8 +35,25 @@ class MoviesViewModel {
         return 0
     }
     
-    //    func getMoviePosterPath(index: IndexPath) -> UIImage {
-    //
-    //    }
+    func getMovieAtIndex(index: IndexPath) -> MovieDetailViewModel? {
+        guard let movie = (moviesPopular?.results[index.row]) else { return nil }
+        let movieDetail = MovieDetailViewModel(movie: movie)
+        return movieDetail
+    }
     
+    func getMovieTitleAtIndex(index: IndexPath) -> String {
+        return moviesPopular?.results[index.row].title ?? ""
+    }
+    
+    func getMovieReleaseDateAtIndex(index: IndexPath) -> String {
+        return moviesPopular?.results[index.row].releaseDate ?? ""
+    }
+    
+    func getMovieRateAtIndex(index: IndexPath) -> String {
+        return "\(moviesPopular?.results[index.row].voteAverage ?? 0.0)"
+    }
+    
+    func getMoviePosterIndex(index: IndexPath) -> String {
+        return moviesPopular?.results[index.row].posterPath ?? ""
+    }
 }
