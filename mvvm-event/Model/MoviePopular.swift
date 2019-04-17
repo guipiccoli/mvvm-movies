@@ -16,7 +16,7 @@ public struct MoviePopular: Codable {
     }
 }
 
-public struct ResultPopular: Codable {
+public struct ResultPopular: Codable, Movie {
     let voteCount, id: Int
     let video: Bool
     let voteAverage: Double

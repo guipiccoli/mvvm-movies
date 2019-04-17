@@ -10,9 +10,9 @@ import Foundation
 
 class MovieDetailViewModel {
 
-    private let selectedMovie: ResultPopular?
+    private let selectedMovie: Movie?
     
-    init(movie: ResultPopular) {
+    init(movie: Movie) {
         selectedMovie = movie
     }
     

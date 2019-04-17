@@ -10,24 +10,29 @@ import UIKit
 import Foundation
 
 protocol DownloadDelegate {
-    
     func didFinishDownloading()
 }
 
 
+@IBDesignable
 class MoviesView: UIViewController {
     
-    
+    @IBInspectable var bool = false
     @IBOutlet weak var moviesTableView: UITableView!
     
-    @IBOutlet weak var popularMoviesButton: UIButton!
-    @IBOutlet weak var topRatedMoviesButton: UIButton!
+    
     
     var movies: MoviesViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        movies = MoviesViewModel.init()
+        if title == "Top Rated Movies"{
+            movies = MoviesViewModel.init(listType: .topRated)
+
+        }
+        else {
+            movies = MoviesViewModel.init(listType: .popular)
+        }
         moviesTableView.dataSource = self 
         moviesTableView.delegate = self
         movies?.downloadDelegate = self
@@ -70,7 +75,7 @@ extension MoviesView: UITableViewDataSource {
         let cell = moviesTableView.dequeueReusableCell(withIdentifier: "movieCell") as! MovieCell
 
         guard let movies = movies else { return cell }
-        cell.movieImage.image = UIImage(named: "star")
+        //cell.movieImage.image = UIImage(named: "star")
         cell.movieName.text = movies.getMovieTitleAtIndex(index: indexPath)
         cell.movieReleaseDate.text = movies.getMovieReleaseDateAtIndex(index: indexPath)
         cell.movieVoteAverage.text = movies.getMovieRateAtIndex(index: indexPath)

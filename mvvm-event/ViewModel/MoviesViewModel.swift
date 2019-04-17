@@ -8,52 +8,88 @@
 import Foundation
 import UIKit
 
+enum MovieType {
+    case topRated, popular
+}
+
 class MoviesViewModel {
     
-    private var moviesPopular: MoviePopular?
-    var downloadDelegate: DownloadDelegate?
-//    var moviesTopRated: MovieTopRated?
+    var listType: MovieType {
+        didSet {
+            switch listType {
+            case .popular:
+                movies = moviesPopular?.results ?? []
+            case .topRated:
+                movies = moviesTopRated?.results ?? []
+            }
+        }
+    }
     
-    init() {
-        fetchMoviesPopular()
+    var movies: [Movie] = []
+    
+    private var moviesPopular: MoviePopular?
+    private var moviesTopRated: MovieTopRated?
+    var downloadDelegate: DownloadDelegate?
+    
+    
+    
+    init(listType: MovieType) {
+        self.listType = listType
+        if listType == .popular {
+            fetchMoviesPopular()
+        }
+        else if listType == .topRated {
+            fetchTopRatedMovies()
+        }
     }
     
     func fetchMoviesPopular(){
         APIService.getPopularMovies { (MoviePopular) in
             self.moviesPopular = MoviePopular ?? nil
+            self.movies = MoviePopular?.results ?? []
             self.downloadDelegate?.didFinishDownloading()
             
         }
         
     }
+    
+    func fetchTopRatedMovies(){
+        APIService.getTopRatedMovies { (MoviesTopRated) in
+            self.moviesTopRated = MoviesTopRated ?? nil
+            self.movies = MoviesTopRated?.results ?? []
+            self.downloadDelegate?.didFinishDownloading()
+        }
+    }
+
         
     func getMoviesNumber() -> Int {
-        if let size = moviesPopular?.results.count{
-            print(size)
-            return size - 2
-        }
-        return 0
+//        if let size = moviesPopular?.results.count{
+//            print(size)
+//            return size - 2
+//        }
+//        return 0
+        return movies.count
     }
     
     func getMovieAtIndex(index: IndexPath) -> MovieDetailViewModel? {
-        guard let movie = (moviesPopular?.results[index.row]) else { return nil }
+        let movie = (movies[index.row])
         let movieDetail = MovieDetailViewModel(movie: movie)
         return movieDetail
     }
     
     func getMovieTitleAtIndex(index: IndexPath) -> String {
-        return moviesPopular?.results[index.row].title ?? ""
+        return movies[index.row].title
     }
     
     func getMovieReleaseDateAtIndex(index: IndexPath) -> String {
-        return moviesPopular?.results[index.row].releaseDate ?? ""
+        return movies[index.row].releaseDate
     }
     
     func getMovieRateAtIndex(index: IndexPath) -> String {
-        return "\(moviesPopular?.results[index.row].voteAverage ?? 0.0)"
+        return "\(movies[index.row].voteAverage)"
     }
     
     func getMoviePosterIndex(index: IndexPath) -> String {
-        return moviesPopular?.results[index.row].posterPath ?? ""
+        return movies[index.row].posterPath
     }
 }

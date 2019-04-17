@@ -31,8 +31,8 @@ struct APIService {
         dataTask.resume()
     }
     
-    static func getTopRatedMovies(completionHandler completion: @escaping (MovieTopRated?) -> Void) {
-        var request = URLRequest(url: URL(string: "https://api.themoviedb.org/3/movie/top_rated?api_key=edac55baa5247ecf4089bac4553ff6ed&language=en-US&page=1")!)
+    static func getTopRatedMovies(fromPage page: Int = 1, completionHandler completion: @escaping (MovieTopRated?) -> Void) {
+        var request = URLRequest(url: URL(string: "https://api.themoviedb.org/3/movie/top_rated?api_key=edac55baa5247ecf4089bac4553ff6ed&language=en-US&page=\(page)")!)
         request.httpMethod = "GET"
         
         let session = URLSession.shared
